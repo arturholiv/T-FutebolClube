@@ -1,7 +1,7 @@
 import * as express from 'express';
 
 class App {
-  public app: express.Express;
+  public app: express.Express = express();
   // ...
 
   constructor() {
@@ -24,7 +24,7 @@ class App {
 
   // ...
   public start(PORT: string | number):void {
-    // ...
+    this.app.listen(PORT, () => { console.log(`rodando na porta ${PORT}`); });
   }
 }
 
