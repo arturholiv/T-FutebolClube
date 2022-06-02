@@ -8,7 +8,7 @@ export default class LoginMiddleware {
     const { email } = req.body;
     this._email = email;
 
-    if (email || !email.includes('@') || !email.endsWith('.com')) {
+    if (!email || !email.includes('@') || !email.endsWith('.com')) {
       return res.status(401).json({ message: 'Incorrect email or password' });
     }
     next();

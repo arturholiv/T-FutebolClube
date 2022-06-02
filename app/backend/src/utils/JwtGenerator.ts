@@ -1,19 +1,17 @@
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
-import fs from 'fs/promises';
+import * as jwt from 'jsonwebtoken';
+import * as fs from 'fs';
+import { Secret, SignOptions } from 'jsonwebtoken';
 
 class JWTGenerator {
   private _SECRET: Secret;
   private _jwtConfig: SignOptions;
-  private _secretPath = '../../jwt.evaluation.key';
 
   constructor() {
     this._jwtConfig = {
       expiresIn: '60 min',
       algorithm: 'HS256',
     };
-    fs.readFile(this._secretPath, 'utf8').then((secret: Secret) => {
-      this._SECRET = secret;
-    });
+    this._SECRET = fs.readFileSync('jwt.evaluation.key', 'utf8');
   }
 
   public generateToken(email: string, password: string): string {
