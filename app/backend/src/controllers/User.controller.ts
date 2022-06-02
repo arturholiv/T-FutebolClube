@@ -16,7 +16,7 @@ export default class UserController implements IUserController {
       if (result) {
         return res.status(200).json(result);
       }
-      return res.status(404).json({ message: 'user not found' });
+      return res.status(401).json({ message: 'Incorrect email or password' });
     } catch (error) {
       return res.status(500).json({ message: 'internal error' });
     }
