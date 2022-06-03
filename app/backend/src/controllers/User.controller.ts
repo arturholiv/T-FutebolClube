@@ -21,4 +21,17 @@ export default class UserController implements IUserController {
       return res.status(500).json({ message: 'internal error' });
     }
   }
+
+  public async getUserRole(req: Request, res: Response): Promise<Response> {
+    try {
+      const { decoded } = req.body;
+      const user = await this._UserService.getUserByEmail(decoded.email);
+      if (user) {
+        return res.status(200).send(user.role);
+      }
+      return res.status(404).json({ message: 'user not found!' });
+    } catch (error) {
+      return res.status(500).json({ message: 'internal error' });
+    }
+  }
 }
