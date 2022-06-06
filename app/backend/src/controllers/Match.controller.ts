@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
+// import Matches from '../database/models/MatchesModel';
 import IMatchService from '../services/interfaces/IMatch.service';
 import IMatch from './interfaces/IMatch.controller';
+import Match from '../database/entities/Match';
+import TeamService from '../services/Team.service';
 
-export default class Matches implements IMatch {
+export default class MatchController implements IMatch {
   private _MatchService: IMatchService;
 
   constructor(matchService: IMatchService) {
@@ -25,6 +28,27 @@ export default class Matches implements IMatch {
         }
       }
       return res.status(404).json({ message: 'No matches found' });
+    } catch (error) {
+      return res.status(500).json({ message: 'internal error' });
+    }
+  }
+
+  public async create(req: Request, res: Response): Promise<Response> {
+    try {
+      const { homeTeam, awayTeam, homeTeamGoals, awayTeamGoals, inProgress } = req.body;
+      const teamService = new TeamService();
+      const home = await teamService.getById(+homeTeam);
+      const away = await teamService.getById(+awayTeam);
+
+      if (home && away) {
+        const match = new Match({ homeTeam, awayTeam, homeTeamGoals, awayTeamGoals, inProgress });
+        const newMatch = await this._MatchService.create(match);
+        if (newMatch) {
+          return res.status(201).json(newMatch);
+        }
+      }
+      return res.status(401)
+        .json({ message: 'It is not possible to create a match with two equal teams' });
     } catch (error) {
       return res.status(500).json({ message: 'internal error' });
     }
