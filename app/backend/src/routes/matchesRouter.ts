@@ -18,5 +18,10 @@ route.patch(
   (req: Request, res: Response, next: NextFunction) => authMiddleware.validateToken(req, res, next),
   (req: Request, res: Response) => matchController.updateProgress(req, res),
 );
+route.patch(
+  '/:id',
+  // (req: Request, res: Response, next: NextFunction) => authMiddleware.validateToken(req, res, next),
+  (req: Request, res: Response) => matchController.update(req, res),
+);
 
 export default route;

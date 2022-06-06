@@ -6,4 +6,5 @@ export default interface IMatch {
   getAllByProgress(inProgress: boolean): Promise<Matches[]>;
   create(Match: Match): Promise<Match | null>;
   updateProgress(id: number): Promise<string | null>;
+  update(id: number, homeTeamGoals: number, awayTeamGoals: number): Promise<string | null>;
 }

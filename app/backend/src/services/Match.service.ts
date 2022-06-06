@@ -8,6 +8,7 @@ export default class MatchesService implements IMatch {
   private _matches: Matches[];
   private _match: Matches;
   private _inProgress: boolean;
+  private _updated: boolean;
 
   public async getAll(): Promise<Matches[]> {
     this._matches = await MatchesService._MatchesModel.findAll({
@@ -60,5 +61,22 @@ export default class MatchesService implements IMatch {
       return null;
     }
     return 'updated';
+  }
+
+  public async update(id: number, homeTeamGoals: number, awayTeamGoals: number):
+  Promise<string | null> {
+    this._updated = true;
+    const updated = await MatchesService._MatchesModel.update({
+      homeTeamGoals,
+      awayTeamGoals,
+    }, {
+      where: {
+        id,
+      },
+    });
+    if (updated) {
+      return 'success';
+    }
+    return null;
   }
 }
