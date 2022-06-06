@@ -4,6 +4,7 @@ import IMatchService from '../services/interfaces/IMatch.service';
 import IMatch from './interfaces/IMatch.controller';
 import Match from '../database/entities/Match';
 import TeamService from '../services/Team.service';
+import MatchService from '../services/Match.service';
 
 export default class MatchController implements IMatch {
   private _MatchService: IMatchService;
@@ -70,9 +71,15 @@ export default class MatchController implements IMatch {
 
   public async update(req: Request, res: Response): Promise<Response> {
     try {
+      const matchService = new MatchService();
       const { id } = req.params;
+      const match = await matchService.getById(+id);
       const { homeTeamGoals, awayTeamGoals } = req.body;
       const result = await this._MatchService.update(+id, +homeTeamGoals, +awayTeamGoals);
+
+      if (!match?.inProgress) {
+        return res.status(401).json({ message: 'Match is already finished' });
+      }
       if (!result) {
         return res.status(401).json({ message: 'error' });
       }

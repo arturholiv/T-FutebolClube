@@ -9,6 +9,7 @@ export default class MatchesService implements IMatch {
   private _match: Matches;
   private _inProgress: boolean;
   private _updated: boolean;
+  private _id: number;
 
   public async getAll(): Promise<Matches[]> {
     this._matches = await MatchesService._MatchesModel.findAll({
@@ -76,6 +77,15 @@ export default class MatchesService implements IMatch {
     });
     if (updated) {
       return 'success';
+    }
+    return null;
+  }
+
+  public async getById(id: number): Promise<Match | null> {
+    this._id = id;
+    const match = await MatchesService._MatchesModel.findByPk(id);
+    if (match) {
+      return match;
     }
     return null;
   }
