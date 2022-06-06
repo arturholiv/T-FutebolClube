@@ -11,9 +11,18 @@ export default class Matches implements IMatch {
 
   public async getAll(req: Request, res: Response): Promise<Response> {
     try {
-      const matches = await this._MatchService.getAll();
-      if (matches) {
-        return res.status(200).json(matches);
+      const { inProgress } = req.query;
+      if (inProgress) {
+        const boolean = inProgress === 'true';
+        const matches = await this._MatchService.getAllByProgress(boolean);
+        if (matches) {
+          return res.status(200).json(matches);
+        }
+      } else {
+        const matches = await this._MatchService.getAll();
+        if (matches) {
+          return res.status(200).json(matches);
+        }
       }
       return res.status(404).json({ message: 'No matches found' });
     } catch (error) {

@@ -9,7 +9,19 @@ export default class MatchesService implements IMatch {
   public async getAll(): Promise<Matches[]> {
     this._matches = await MatchesService._MatchesModel.findAll({
       include: [{ model: Teams, as: 'teamHome', attributes: ['teamName'] },
-        { model: Teams, as: 'teamAway', attributes: ['teamName'] },
+        { model: Teams, as: 'teamAway', attributes: ['teamName'] }, // icludes é como se fosse um join
+      ],
+    });
+    return this._matches;
+  }
+
+  public async getAllByProgress(inProgress: boolean): Promise<Matches[]> {
+    this._matches = await MatchesService._MatchesModel.findAll({
+      where: {
+        inProgress,
+      },
+      include: [{ model: Teams, as: 'teamHome', attributes: ['teamName'] },
+        { model: Teams, as: 'teamAway', attributes: ['teamName'] }, // icludes é como se fosse um join
       ],
     });
     return this._matches;
