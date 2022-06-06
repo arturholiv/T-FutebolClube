@@ -7,6 +7,7 @@ export default class MatchesService implements IMatch {
   private static _MatchesModel = Matches;
   private _matches: Matches[];
   private _match: Matches;
+  private _inProgress: boolean;
 
   public async getAll(): Promise<Matches[]> {
     this._matches = await MatchesService._MatchesModel.findAll({
@@ -41,5 +42,23 @@ export default class MatchesService implements IMatch {
       inProgress: match.inProgress,
     });
     return match;
+  }
+
+  public async updateProgress(id: number): Promise<string | null> {
+    this._inProgress = false;
+    const updated = await MatchesService._MatchesModel.update(
+      {
+        inProgress: false,
+      },
+      {
+        where: {
+          id,
+        },
+      },
+    );
+    if (!updated) {
+      return null;
+    }
+    return 'updated';
   }
 }

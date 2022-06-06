@@ -29,7 +29,7 @@ export default class MatchController implements IMatch {
       }
       return res.status(404).json({ message: 'No matches found' });
     } catch (error) {
-      return res.status(500).json({ message: 'internal error' });
+      return res.status(500).json({ message: 'internal error.' });
     }
   }
 
@@ -50,6 +50,19 @@ export default class MatchController implements IMatch {
           .json({ message: 'It is not possible to create a match with two equal teams' });
       }
       return res.status(401).json({ message: 'There is no team with such id!' });
+    } catch (error) {
+      return res.status(500).json({ message: 'internal error' });
+    }
+  }
+
+  public async updateProgress(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params;
+      const result = await this._MatchService.updateProgress(+id);
+      if (!result) {
+        return res.status(401).json({ message: 'error' });
+      }
+      return res.status(200).json({ message: 'Finished' });
     } catch (error) {
       return res.status(500).json({ message: 'internal error' });
     }
