@@ -70,7 +70,6 @@ export default class MatchesService implements IMatch {
     const updated = await MatchesService._MatchesModel.update({
       homeTeamGoals,
       awayTeamGoals,
-      inProgress: false,
     }, {
       where: {
         id,

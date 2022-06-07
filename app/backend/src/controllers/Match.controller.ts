@@ -76,16 +76,17 @@ export default class MatchController implements IMatch {
       const match = await matchService.getById(+id);
       const { homeTeamGoals, awayTeamGoals } = req.body;
       const result = await this._MatchService.update(+id, +homeTeamGoals, +awayTeamGoals);
-
       if (!match?.inProgress) {
         return res.status(401).json({ message: 'Match is already finished' });
+      }
+      if (!homeTeamGoals && !awayTeamGoals) {
+        await this._MatchService.updateProgress(+id);
+        return res.status(200).json({ message: 'Match Finished' });
       }
       if (!result) {
         return res.status(401).json({ message: 'error' });
       }
       return res.status(200).json({ message: 'Updated' });
-    } catch (error) {
-      return res.status(500).json({ message: 'internal error' });
-    }
+    } catch (error) { return res.status(500).json({ message: 'internal error' }); }
   }
 }
