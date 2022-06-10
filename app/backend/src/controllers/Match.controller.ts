@@ -16,7 +16,7 @@ export default class MatchController implements IMatch {
   public async getAll(req: Request, res: Response): Promise<Response> {
     try {
       const { inProgress } = req.query;
-      if (inProgress) {
+      if (inProgress === 'true' || inProgress === 'false') {
         const boolean = inProgress === 'true';
         const matches = await this._MatchService.getAllByProgress(boolean);
         if (matches) {
@@ -50,7 +50,7 @@ export default class MatchController implements IMatch {
         return res.status(401)
           .json({ message: 'It is not possible to create a match with two equal teams' });
       }
-      return res.status(401).json({ message: 'There is no team with such id!' });
+      return res.status(404).json({ message: 'There is no team with such id!' });
     } catch (error) {
       return res.status(500).json({ message: 'internal error.' });
     }

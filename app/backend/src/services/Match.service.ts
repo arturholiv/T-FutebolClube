@@ -43,7 +43,7 @@ export default class MatchesService implements IMatch {
       awayTeamGoals: match.awayTeamGoals,
       inProgress: match.inProgress,
     });
-    return match;
+    return this._match;
   }
 
   public async updateProgress(id: number): Promise<string | null> {
