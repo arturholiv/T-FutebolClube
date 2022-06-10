@@ -13,6 +13,7 @@ export default class LeaderbordService implements ILeaderboardService {
   private _leaderboardFormat: ILeaderboard[] = [];
   private _leaderboardHomeFormat: ILeaderboard[] = [];
   private _leaderboardAwayFormat: ILeaderboard[] = [];
+  public _result: ILeaderboard[];
 
   public async generateLeaderboard(): Promise<void> {
     this._teams = await LeaderbordService._TeamsModel.findAll({ raw: true });
@@ -68,20 +69,6 @@ export default class LeaderbordService implements ILeaderboardService {
         goalsBalance: hTeam.goalsBalance + homeTeamGoals - awayTeamGoals,
         efficiency: +(((hTeam.totalPoints + 3) / ((hTeam.totalGames + 1) * 3)) * 100).toFixed(2),
       };
-      // const { homeTeam, homeTeamGoals, awayTeamGoals } = match;
-      // const thisTeam = this._leaderboardFormat[homeTeam];
-
-      // this._leaderboardFormat[homeTeam] = {
-      //   teamName: thisTeam.teamName,
-      //   totalPoints: thisTeam.totalPoints + 3,
-      //   totalGames: thisTeam.totalGames + 1,
-      //   totalVictories: thisTeam.totalVictories + 1,
-      //   totalDraws: thisTeam.totalDraws,
-      //   totalLosses: thisTeam.totalLosses,
-      //   goalsFavor: homeTeamGoals,
-      //   goalsOwn: awayTeamGoals,
-      //   goalsBalance: homeTeamGoals - awayTeamGoals,
-      //   efficiency: (thisTeam.totalPoints + 3) / (((thisTeam.totalGames + 1) * 3) * 100),
     }
   }
 
@@ -132,7 +119,6 @@ export default class LeaderbordService implements ILeaderboardService {
   public async teamAwayDraw(match: Matches): Promise<void> {
     const { awayTeam, homeTeamGoals, awayTeamGoals } = match;
     const team = await LeaderbordService._TeamsModel.findByPk(awayTeam);
-
     if (team) {
       const index = this._leaderboardAwayFormat.findIndex((t) => t.teamName === team.teamName);
       const teamA = this._leaderboardAwayFormat[index];
@@ -159,7 +145,6 @@ export default class LeaderbordService implements ILeaderboardService {
     if (team) {
       const index = this._leaderboardHomeFormat.findIndex((t) => t.teamName === team.teamName);
       const teamH = this._leaderboardHomeFormat[index];
-
       this._leaderboardHomeFormat[index] = {
         teamName: team.teamName,
         totalPoints: teamH.totalPoints,
@@ -169,7 +154,7 @@ export default class LeaderbordService implements ILeaderboardService {
         totalLosses: +1,
         goalsFavor: teamH.goalsFavor + homeTeamGoals,
         goalsOwn: teamH.goalsOwn + awayTeamGoals,
-        goalsBalance: teamH.goalsBalance + homeTeamGoals - awayTeamGoals,
+        goalsBalance: teamH.goalsBalance + awayTeamGoals - homeTeamGoals,
         efficiency: +((teamH.totalPoints / ((teamH.totalGames + 1) * 3)) * 100).toFixed(2),
       };
     }
@@ -178,7 +163,6 @@ export default class LeaderbordService implements ILeaderboardService {
   public async teamAwayLost(match: Matches): Promise<void> {
     const { awayTeam, homeTeamGoals, awayTeamGoals } = match;
     const team = await LeaderbordService._TeamsModel.findByPk(awayTeam);
-
     if (team) {
       const index = this._leaderboardAwayFormat.findIndex((t) => t.teamName === team.teamName);
       const teamH = this._leaderboardAwayFormat[index];
@@ -202,7 +186,6 @@ export default class LeaderbordService implements ILeaderboardService {
     const t = this._teams.length;
     const h = this._leaderboardHomeFormat;
     const a = this._leaderboardAwayFormat;
-
     for (let i = 0; i < t; i += 1) {
       this._leaderboardFormat[i] = {
         teamName: h[i].teamName,
@@ -220,21 +203,28 @@ export default class LeaderbordService implements ILeaderboardService {
     }
   }
 
+  public orderArr(arr: ILeaderboard[]): ILeaderboard[] {
+    this._result = arr.sort((a, b) => b.goalsOwn - a.goalsOwn)
+      .sort((a, b) => b.goalsFavor - a.goalsFavor)
+      .sort((a, b) => b.goalsBalance - a.goalsBalance)
+      .sort((a, b) => b.totalVictories - a.totalVictories)
+      .sort((a, b) => b.totalPoints - a.totalPoints);
+    return this._result;
+  }
+
   public async getLeaderboard(): Promise<LeaderboardType> {
     this.generateLeaderboard();
     this._matches = await LeaderbordService._MatchesModel.findAll({
       raw: true,
       include: [{ model: Teams, as: 'teamHome', attributes: ['teamName'] },
-        { model: Teams, as: 'teamAway', attributes: ['teamName'] },
-      ],
-    });
+        { model: Teams, as: 'teamAway', attributes: ['teamName'] }] });
     const promises = this._matches.filter((match) => !match.inProgress)
       .map((match) => this.verifyScore(match));
     await Promise.all(promises);
     this.getFullLeaderboard();
-    const leaderbdHome = this._leaderboardHomeFormat.sort((a, b) => b.totalPoints - a.totalPoints);
-    const leaderbdAway = this._leaderboardAwayFormat.sort((a, b) => b.totalPoints - a.totalPoints);
-    const leaderboard = this._leaderboardFormat.sort((a, b) => b.totalPoints - a.totalPoints);
+    const leaderbdHome = this.orderArr(this._leaderboardHomeFormat);
+    const leaderbdAway = this.orderArr(this._leaderboardAwayFormat);
+    const leaderboard = this.orderArr(this._leaderboardFormat);
     this._leaderboardHomeFormat = [];
     this._leaderboardAwayFormat = [];
     this._leaderboardFormat = [];
