@@ -4,7 +4,7 @@ import IMatchService from '../services/interfaces/IMatch.service';
 import IMatch from './interfaces/IMatch.controller';
 import Match from '../database/entities/Match';
 import TeamService from '../services/Team.service';
-import MatchService from '../services/Match.service';
+// import MatchService from '../services/Match.service';
 
 export default class MatchController implements IMatch {
   private _MatchService: IMatchService;
@@ -71,22 +71,24 @@ export default class MatchController implements IMatch {
 
   public async update(req: Request, res: Response): Promise<Response> {
     try {
-      const matchService = new MatchService();
+      // const matchService = new MatchService();
       const { id } = req.params;
-      const match = await matchService.getById(+id);
+      // const match = await this._MatchService.getById(+id);
       const { homeTeamGoals, awayTeamGoals } = req.body;
       const result = await this._MatchService.update(+id, +homeTeamGoals, +awayTeamGoals);
-      if (!match?.inProgress) {
-        return res.status(401).json({ message: 'Match is already finished' });
-      }
+      // if (!result) {
+      //   return res.status(401).json({ message: 'Match is already finished' });
+      // }
       if (!homeTeamGoals && !awayTeamGoals) {
         await this._MatchService.updateProgress(+id);
-        return res.status(200).json({ message: 'Match Finished' });
+        return res.status(200).json({ message: 'Match Finished!' });
       }
       if (!result) {
         return res.status(401).json({ message: 'error' });
       }
       return res.status(200).json({ message: 'Updated' });
-    } catch (error) { return res.status(500).json({ message: 'internal error' }); }
+    } catch (error) {
+      return res.status(500).json({ message: 'internal error' });
+    }
   }
 }
