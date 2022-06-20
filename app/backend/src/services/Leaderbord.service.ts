@@ -19,7 +19,7 @@ export default class LeaderbordService implements ILeaderboardService {
     this._teams = await LeaderbordService._TeamsModel.findAll({ raw: true });
     this._teams.forEach((team) => {
       const format = {
-        teamName: team.teamName,
+        name: team.teamName,
         totalPoints: 0,
         totalGames: 0,
         totalVictories: 0,
@@ -54,11 +54,11 @@ export default class LeaderbordService implements ILeaderboardService {
     const { homeTeam, homeTeamGoals, awayTeamGoals } = match;
     const team = await LeaderbordService._TeamsModel.findByPk(homeTeam);
     if (team) {
-      const index = this._leaderboardHomeFormat.findIndex((t) => t.teamName === team.teamName);
+      const index = this._leaderboardHomeFormat.findIndex((t) => t.name === team.teamName);
       const hTeam = this._leaderboardHomeFormat[index];
 
       this._leaderboardHomeFormat[index] = {
-        teamName: team.teamName,
+        name: team.teamName,
         totalPoints: hTeam.totalPoints + 3,
         totalGames: hTeam.totalGames + 1,
         totalVictories: hTeam.totalVictories + 1,
@@ -76,10 +76,10 @@ export default class LeaderbordService implements ILeaderboardService {
     const { awayTeam, awayTeamGoals, homeTeamGoals } = match;
     const team = await LeaderbordService._TeamsModel.findByPk(awayTeam);
     if (team) {
-      const index = this._leaderboardAwayFormat.findIndex((t) => t.teamName === team.teamName);
+      const index = this._leaderboardAwayFormat.findIndex((t) => t.name === team.teamName);
       const aTeam = this._leaderboardAwayFormat[index];
       this._leaderboardAwayFormat[index] = {
-        teamName: team.teamName,
+        name: team.teamName,
         totalPoints: aTeam.totalPoints + 3,
         totalGames: aTeam.totalGames + 1,
         totalVictories: aTeam.totalVictories + 1,
@@ -98,11 +98,11 @@ export default class LeaderbordService implements ILeaderboardService {
     const team = await LeaderbordService._TeamsModel.findByPk(homeTeam);
 
     if (team) {
-      const index = this._leaderboardHomeFormat.findIndex((t) => t.teamName === team.teamName);
+      const index = this._leaderboardHomeFormat.findIndex((t) => t.name === team.teamName);
       const teamH = this._leaderboardHomeFormat[index];
 
       this._leaderboardHomeFormat[index] = {
-        teamName: team.teamName,
+        name: team.teamName,
         totalPoints: teamH.totalPoints + 1,
         totalGames: teamH.totalGames + 1,
         totalVictories: teamH.totalVictories,
@@ -120,11 +120,11 @@ export default class LeaderbordService implements ILeaderboardService {
     const { awayTeam, homeTeamGoals, awayTeamGoals } = match;
     const team = await LeaderbordService._TeamsModel.findByPk(awayTeam);
     if (team) {
-      const index = this._leaderboardAwayFormat.findIndex((t) => t.teamName === team.teamName);
+      const index = this._leaderboardAwayFormat.findIndex((t) => t.name === team.teamName);
       const teamA = this._leaderboardAwayFormat[index];
 
       this._leaderboardAwayFormat[index] = {
-        teamName: team.teamName,
+        name: team.teamName,
         totalPoints: teamA.totalPoints + 1,
         totalGames: teamA.totalGames + 1,
         totalVictories: teamA.totalVictories,
@@ -143,10 +143,10 @@ export default class LeaderbordService implements ILeaderboardService {
     const team = await LeaderbordService._TeamsModel.findByPk(homeTeam);
 
     if (team) {
-      const index = this._leaderboardHomeFormat.findIndex((t) => t.teamName === team.teamName);
+      const index = this._leaderboardHomeFormat.findIndex((t) => t.name === team.teamName);
       const teamH = this._leaderboardHomeFormat[index];
       this._leaderboardHomeFormat[index] = {
-        teamName: team.teamName,
+        name: team.teamName,
         totalPoints: teamH.totalPoints,
         totalGames: teamH.totalGames + 1,
         totalVictories: teamH.totalVictories,
@@ -164,11 +164,11 @@ export default class LeaderbordService implements ILeaderboardService {
     const { awayTeam, homeTeamGoals, awayTeamGoals } = match;
     const team = await LeaderbordService._TeamsModel.findByPk(awayTeam);
     if (team) {
-      const index = this._leaderboardAwayFormat.findIndex((t) => t.teamName === team.teamName);
+      const index = this._leaderboardAwayFormat.findIndex((t) => t.name === team.teamName);
       const teamH = this._leaderboardAwayFormat[index];
 
       this._leaderboardAwayFormat[index] = {
-        teamName: team.teamName,
+        name: team.teamName,
         totalPoints: teamH.totalPoints,
         totalGames: teamH.totalGames + 1,
         totalVictories: teamH.totalVictories,
@@ -188,7 +188,7 @@ export default class LeaderbordService implements ILeaderboardService {
     const a = this._leaderboardAwayFormat;
     for (let i = 0; i < t; i += 1) {
       this._leaderboardFormat[i] = {
-        teamName: h[i].teamName,
+        name: h[i].name,
         totalPoints: h[i].totalPoints + a[i].totalPoints,
         totalGames: h[i].totalGames + a[i].totalGames,
         totalVictories: h[i].totalVictories + a[i].totalVictories,
