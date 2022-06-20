@@ -204,11 +204,11 @@ export default class LeaderbordService implements ILeaderboardService {
   }
 
   public orderArr(arr: ILeaderboard[]): ILeaderboard[] {
-    this._result = arr.sort((a, b) => b.goalsOwn - a.goalsOwn)
-      .sort((a, b) => b.goalsFavor - a.goalsFavor)
-      .sort((a, b) => b.goalsBalance - a.goalsBalance)
-      .sort((a, b) => b.totalVictories - a.totalVictories)
-      .sort((a, b) => b.totalPoints - a.totalPoints);
+    this._result = arr.sort((a, b) => b.totalPoints - a.totalPoints
+    || b.totalVictories - a.totalVictories
+    || b.goalsBalance - a.goalsBalance || b.goalsFavor - a.goalsFavor
+    || b.goalsOwn - a.goalsOwn);
+
     return this._result;
   }
 
