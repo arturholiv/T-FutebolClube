@@ -1,4 +1,5 @@
 jsonwebtoken
 bcrypt
+uuid
 bcryptjs
 @types/bcrypt
