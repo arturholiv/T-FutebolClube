@@ -27,7 +27,7 @@ export default class UserController implements IUserController {
       const { decoded } = req.body;
       const user = await this._UserService.getUserByEmail(decoded.email);
       if (user) {
-        return res.status(200).send(user.role);
+        return res.status(200).json(user.role);
       }
       return res.status(404).json({ message: 'user not found!' });
     } catch (error) {

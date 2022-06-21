@@ -97,3 +97,37 @@ describe('/login email does not exists', () => {
   });
 });
 
+describe('/login/validate', () => {
+  let chaiHttpResponse: Response;
+
+  before(async () => {
+    sinon
+    .stub(UserModel, "findOne")
+    .resolves({
+      id: 1,
+      username: "Admin",
+      role: "admin",
+      email: "admin@admin.com",
+      password: "$2a$08$xi.Hxk1czAO0nZR..B393u10aED0RQ1N3PAEXQ7HxtLjKPEZBu.PW",
+    } as UserModel);
+
+    sinon
+      .stub(JWT, "verify")
+      .resolves({
+        email: "admin@admin.com",
+      });
+  });
+
+  after(()=>{
+    (JWT.verify as sinon.SinonStub).restore();
+  })
+
+  it('returns role', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/login/validate')
+      .set('authorization', tokenJWT);
+    expect(chaiHttpResponse.status).to.be.equal(200);
+    expect(chaiHttpResponse.body).to.equal('admin');
+  });
+});
