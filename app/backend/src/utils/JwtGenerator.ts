@@ -8,7 +8,7 @@ class JWTGenerator {
 
   constructor() {
     this._jwtConfig = {
-      expiresIn: '60 min',
+      expiresIn: '7d',
       algorithm: 'HS256',
     };
     this._SECRET = fs.readFileSync('jwt.evaluation.key', 'utf8');
