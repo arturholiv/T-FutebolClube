@@ -36,153 +36,140 @@ export default class LeaderbordService implements ILeaderboardService {
     });
   }
 
-  public async verifyScore(match: Matches): Promise<void> {
+  public verifyScore(match: Matches): void {
     const { homeTeamGoals, awayTeamGoals } = match;
     if (homeTeamGoals > awayTeamGoals) {
-      await this.teamHomeWins(match);
-      await this.teamAwayLost(match);
+      this.teamHomeWins(match);
+      this.teamAwayLost(match);
     } else if (homeTeamGoals === awayTeamGoals) {
-      await this.teamHomeDraw(match);
-      await this.teamAwayDraw(match);
+      this.teamHomeDraw(match);
+      this.teamAwayDraw(match);
     } else {
-      await this.teamHomeLost(match);
-      await this.teamAwayWins(match);
+      this.teamHomeLost(match);
+      this.teamAwayWins(match);
     }
   }
 
-  public async teamHomeWins(match: Matches): Promise<void> {
+  public teamHomeWins(match: Matches): void {
     const { homeTeam, homeTeamGoals, awayTeamGoals } = match;
-    const team = await LeaderbordService._TeamsModel.findByPk(homeTeam);
-    if (team) {
-      const index = this._leaderboardHomeFormat.findIndex((t) => t.name === team.teamName);
-      const hTeam = this._leaderboardHomeFormat[index];
-
-      this._leaderboardHomeFormat[index] = {
-        name: team.teamName,
-        totalPoints: hTeam.totalPoints + 3,
-        totalGames: hTeam.totalGames + 1,
-        totalVictories: hTeam.totalVictories + 1,
-        totalDraws: hTeam.totalDraws,
-        totalLosses: hTeam.totalLosses,
-        goalsFavor: hTeam.goalsFavor + homeTeamGoals,
-        goalsOwn: hTeam.goalsOwn + awayTeamGoals,
-        goalsBalance: hTeam.goalsBalance + homeTeamGoals - awayTeamGoals,
-        efficiency: +(((hTeam.totalPoints + 3) / ((hTeam.totalGames + 1) * 3)) * 100).toFixed(2),
-      };
-    }
+    const [{ teamName }] = this._teams.filter((team) => team.id === homeTeam);
+    const index = this._leaderboardHomeFormat.findIndex((t) => t.name === teamName);
+    const hTeam = this._leaderboardHomeFormat[index];
+    this._leaderboardHomeFormat[index] = {
+      name: teamName,
+      totalPoints: hTeam.totalPoints + 3,
+      totalGames: hTeam.totalGames + 1,
+      totalVictories: hTeam.totalVictories + 1,
+      totalDraws: hTeam.totalDraws,
+      totalLosses: hTeam.totalLosses,
+      goalsFavor: hTeam.goalsFavor + homeTeamGoals,
+      goalsOwn: hTeam.goalsOwn + awayTeamGoals,
+      goalsBalance: hTeam.goalsBalance + homeTeamGoals - awayTeamGoals,
+      efficiency: +(((hTeam.totalPoints + 3) / ((hTeam.totalGames + 1) * 3)) * 100).toFixed(2),
+    };
   }
 
-  public async teamAwayWins(match: Matches): Promise<void> {
+  public teamAwayWins(match: Matches): void {
     const { awayTeam, awayTeamGoals, homeTeamGoals } = match;
-    const team = await LeaderbordService._TeamsModel.findByPk(awayTeam);
-    if (team) {
-      const index = this._leaderboardAwayFormat.findIndex((t) => t.name === team.teamName);
-      const aTeam = this._leaderboardAwayFormat[index];
-      this._leaderboardAwayFormat[index] = {
-        name: team.teamName,
-        totalPoints: aTeam.totalPoints + 3,
-        totalGames: aTeam.totalGames + 1,
-        totalVictories: aTeam.totalVictories + 1,
-        totalDraws: aTeam.totalDraws,
-        totalLosses: aTeam.totalLosses,
-        goalsFavor: aTeam.goalsFavor + awayTeamGoals,
-        goalsOwn: aTeam.goalsOwn + homeTeamGoals,
-        goalsBalance: aTeam.goalsBalance + awayTeamGoals - homeTeamGoals,
-        efficiency: +(((aTeam.totalPoints + 3) / ((aTeam.totalGames + 1) * 3)) * 100).toFixed(2),
-      };
-    }
+    const [{ teamName }] = this._teams.filter((team) => team.id === awayTeam);
+    const index = this._leaderboardAwayFormat.findIndex((t) => t.name === teamName);
+    const aTeam = this._leaderboardAwayFormat[index];
+    this._leaderboardAwayFormat[index] = {
+      name: teamName,
+      totalPoints: aTeam.totalPoints + 3,
+      totalGames: aTeam.totalGames + 1,
+      totalVictories: aTeam.totalVictories + 1,
+      totalDraws: aTeam.totalDraws,
+      totalLosses: aTeam.totalLosses,
+      goalsFavor: aTeam.goalsFavor + awayTeamGoals,
+      goalsOwn: aTeam.goalsOwn + homeTeamGoals,
+      goalsBalance: aTeam.goalsBalance + awayTeamGoals - homeTeamGoals,
+      efficiency: +(((aTeam.totalPoints + 3) / ((aTeam.totalGames + 1) * 3)) * 100).toFixed(2),
+    };
   }
 
-  public async teamHomeDraw(match: Matches): Promise<void> {
+  public teamHomeDraw(match: Matches): void {
     const { homeTeam, homeTeamGoals, awayTeamGoals } = match;
-    const team = await LeaderbordService._TeamsModel.findByPk(homeTeam);
+    const [{ teamName }] = this._teams.filter((team) => team.id === homeTeam);
 
-    if (team) {
-      const index = this._leaderboardHomeFormat.findIndex((t) => t.name === team.teamName);
-      const teamH = this._leaderboardHomeFormat[index];
+    const index = this._leaderboardHomeFormat.findIndex((t) => t.name === teamName);
+    const teamH = this._leaderboardHomeFormat[index];
 
-      this._leaderboardHomeFormat[index] = {
-        name: team.teamName,
-        totalPoints: teamH.totalPoints + 1,
-        totalGames: teamH.totalGames + 1,
-        totalVictories: teamH.totalVictories,
-        totalDraws: teamH.totalDraws + 1,
-        totalLosses: teamH.totalLosses,
-        goalsFavor: teamH.goalsFavor + homeTeamGoals,
-        goalsOwn: teamH.goalsOwn + awayTeamGoals,
-        goalsBalance: teamH.goalsBalance + (homeTeamGoals - awayTeamGoals),
-        efficiency: +(((teamH.totalPoints + 1) / ((teamH.totalGames + 1) * 3)) * 100).toFixed(2),
-      };
-    }
+    this._leaderboardHomeFormat[index] = {
+      name: teamName,
+      totalPoints: teamH.totalPoints + 1,
+      totalGames: teamH.totalGames + 1,
+      totalVictories: teamH.totalVictories,
+      totalDraws: teamH.totalDraws + 1,
+      totalLosses: teamH.totalLosses,
+      goalsFavor: teamH.goalsFavor + homeTeamGoals,
+      goalsOwn: teamH.goalsOwn + awayTeamGoals,
+      goalsBalance: teamH.goalsBalance + (homeTeamGoals - awayTeamGoals),
+      efficiency: +(((teamH.totalPoints + 1) / ((teamH.totalGames + 1) * 3)) * 100).toFixed(2),
+    };
   }
 
-  public async teamAwayDraw(match: Matches): Promise<void> {
+  public teamAwayDraw(match: Matches): void {
     const { awayTeam, homeTeamGoals, awayTeamGoals } = match;
-    const team = await LeaderbordService._TeamsModel.findByPk(awayTeam);
-    if (team) {
-      const index = this._leaderboardAwayFormat.findIndex((t) => t.name === team.teamName);
-      const teamA = this._leaderboardAwayFormat[index];
+    const [{ teamName }] = this._teams.filter((team) => team.id === awayTeam);
+    const index = this._leaderboardAwayFormat.findIndex((t) => t.name === teamName);
+    const teamA = this._leaderboardAwayFormat[index];
 
-      this._leaderboardAwayFormat[index] = {
-        name: team.teamName,
-        totalPoints: teamA.totalPoints + 1,
-        totalGames: teamA.totalGames + 1,
-        totalVictories: teamA.totalVictories,
-        totalDraws: teamA.totalDraws + 1,
-        totalLosses: teamA.totalLosses,
-        goalsFavor: teamA.goalsFavor + awayTeamGoals,
-        goalsOwn: teamA.goalsOwn + homeTeamGoals,
-        goalsBalance: teamA.goalsBalance + (awayTeamGoals - homeTeamGoals),
-        efficiency: +(((teamA.totalPoints + 1) / ((teamA.totalGames + 1) * 3)) * 100).toFixed(2),
-      };
-    }
+    this._leaderboardAwayFormat[index] = {
+      name: teamName,
+      totalPoints: teamA.totalPoints + 1,
+      totalGames: teamA.totalGames + 1,
+      totalVictories: teamA.totalVictories,
+      totalDraws: teamA.totalDraws + 1,
+      totalLosses: teamA.totalLosses,
+      goalsFavor: teamA.goalsFavor + awayTeamGoals,
+      goalsOwn: teamA.goalsOwn + homeTeamGoals,
+      goalsBalance: teamA.goalsBalance + (awayTeamGoals - homeTeamGoals),
+      efficiency: +(((teamA.totalPoints + 1) / ((teamA.totalGames + 1) * 3)) * 100).toFixed(2),
+    };
   }
 
-  public async teamHomeLost(match: Matches): Promise<void> {
+  public teamHomeLost(match: Matches): void {
     const { homeTeam, homeTeamGoals, awayTeamGoals } = match;
-    const team = await LeaderbordService._TeamsModel.findByPk(homeTeam);
+    const [{ teamName }] = this._teams.filter((team) => team.id === homeTeam);
 
-    if (team) {
-      const index = this._leaderboardHomeFormat.findIndex((t) => t.name === team.teamName);
-      const teamH = this._leaderboardHomeFormat[index];
-      this._leaderboardHomeFormat[index] = {
-        name: team.teamName,
-        totalPoints: teamH.totalPoints,
-        totalGames: teamH.totalGames + 1,
-        totalVictories: teamH.totalVictories,
-        totalDraws: teamH.totalDraws,
-        totalLosses: +1,
-        goalsFavor: teamH.goalsFavor + homeTeamGoals,
-        goalsOwn: teamH.goalsOwn + awayTeamGoals,
-        goalsBalance: teamH.goalsBalance + awayTeamGoals - homeTeamGoals,
-        efficiency: +((teamH.totalPoints / ((teamH.totalGames + 1) * 3)) * 100).toFixed(2),
-      };
-    }
+    const index = this._leaderboardHomeFormat.findIndex((t) => t.name === teamName);
+    const teamH = this._leaderboardHomeFormat[index];
+    this._leaderboardHomeFormat[index] = {
+      name: teamName,
+      totalPoints: teamH.totalPoints,
+      totalGames: teamH.totalGames + 1,
+      totalVictories: teamH.totalVictories,
+      totalDraws: teamH.totalDraws,
+      totalLosses: +1,
+      goalsFavor: teamH.goalsFavor + homeTeamGoals,
+      goalsOwn: teamH.goalsOwn + awayTeamGoals,
+      goalsBalance: teamH.goalsBalance + awayTeamGoals - homeTeamGoals,
+      efficiency: +((teamH.totalPoints / ((teamH.totalGames + 1) * 3)) * 100).toFixed(2),
+    };
   }
 
-  public async teamAwayLost(match: Matches): Promise<void> {
+  public teamAwayLost(match: Matches): void {
     const { awayTeam, homeTeamGoals, awayTeamGoals } = match;
-    const team = await LeaderbordService._TeamsModel.findByPk(awayTeam);
-    if (team) {
-      const index = this._leaderboardAwayFormat.findIndex((t) => t.name === team.teamName);
-      const teamH = this._leaderboardAwayFormat[index];
+    const [{ teamName }] = this._teams.filter((team) => team.id === awayTeam);
+    const index = this._leaderboardAwayFormat.findIndex((t) => t.name === teamName);
+    const teamH = this._leaderboardAwayFormat[index];
 
-      this._leaderboardAwayFormat[index] = {
-        name: team.teamName,
-        totalPoints: teamH.totalPoints,
-        totalGames: teamH.totalGames + 1,
-        totalVictories: teamH.totalVictories,
-        totalDraws: teamH.totalDraws,
-        totalLosses: teamH.totalLosses + 1,
-        goalsFavor: teamH.goalsFavor + awayTeamGoals,
-        goalsOwn: teamH.goalsOwn + homeTeamGoals,
-        goalsBalance: teamH.goalsBalance + awayTeamGoals - homeTeamGoals,
-        efficiency: +((teamH.totalPoints / ((teamH.totalGames + 1) * 3)) * 100).toFixed(2),
-      };
-    }
+    this._leaderboardAwayFormat[index] = {
+      name: teamName,
+      totalPoints: teamH.totalPoints,
+      totalGames: teamH.totalGames + 1,
+      totalVictories: teamH.totalVictories,
+      totalDraws: teamH.totalDraws,
+      totalLosses: teamH.totalLosses + 1,
+      goalsFavor: teamH.goalsFavor + awayTeamGoals,
+      goalsOwn: teamH.goalsOwn + homeTeamGoals,
+      goalsBalance: teamH.goalsBalance + awayTeamGoals - homeTeamGoals,
+      efficiency: +((teamH.totalPoints / ((teamH.totalGames + 1) * 3)) * 100).toFixed(2),
+    };
   }
 
-  public async getFullLeaderboard(): Promise<void> {
+  public getFullLeaderboard(): void {
     const t = this._teams.length;
     const h = this._leaderboardHomeFormat;
     const a = this._leaderboardAwayFormat;

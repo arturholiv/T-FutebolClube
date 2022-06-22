@@ -5,12 +5,11 @@ import LeaderboardType from '../types/LeaderboardType';
 export default interface ILeaderboardService {
   generateLeaderboard(): Promise<void>;
   getLeaderboard(): Promise<LeaderboardType>;
-  // getLeaderboard(): Promise<ILeaderboard[]>;
-  verifyScore(match: Matches): Promise<void>
-  teamHomeWins(match: Matches): Promise<void>
-  teamHomeDraw(match: Matches): Promise<void>
-  teamHomeLost(match: Matches): Promise<void>
-  teamAwayDraw(match: Matches): Promise<void>
-  teamAwayWins(match: Matches): Promise<void>
-  teamAwayLost(match: Matches): Promise<void>
+  verifyScore(match: Matches) :void
+  teamHomeWins(match: Matches) :void
+  teamHomeDraw(match: Matches) :void
+  teamHomeLost(match: Matches) :void
+  teamAwayDraw(match: Matches) :void
+  teamAwayWins(match: Matches) :void
+  teamAwayLost(match: Matches) :void
 }
