@@ -14,10 +14,8 @@ export default class UserService implements IUserService {
     const user = await this.getUserByEmail(emailLogin);
 
     if (user && compareSync(password, user.password)) {
-      console.log('entrei');
       const jwt = new JwtGenerator();
       this._token = jwt.generateToken(emailLogin, password);
-      console.log(this._token);
       const { id, username, role, email } = user;
       return {
         user: {

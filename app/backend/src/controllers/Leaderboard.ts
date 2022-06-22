@@ -18,7 +18,6 @@ export default class LeaderboardController implements ILeaderboardController {
       }
       return res.status(404).json({ message: 'not found' });
     } catch (e) {
-      console.log(e);
       return res.status(500).json({ message: 'internal error!' });
     }
   }
@@ -31,7 +30,6 @@ export default class LeaderboardController implements ILeaderboardController {
       }
       return res.status(404).json({ message: 'not found' });
     } catch (e) {
-      console.log(e);
       return res.status(500).json({ message: 'internal error' });
     }
   }
@@ -44,7 +42,6 @@ export default class LeaderboardController implements ILeaderboardController {
       }
       return res.status(404).json({ message: 'not found' });
     } catch (e) {
-      console.log(e);
       return res.status(500).json({ message: 'internal errorr' });
     }
   }
